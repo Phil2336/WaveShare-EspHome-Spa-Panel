@@ -1,0 +1,722 @@
+## Using Configs from:- https://github.com/runevad/waveshare-esp32-s3-7inch/blob/main/waveshare-esp32-s3-7inch.yaml
+## And Post#2 Here:- https://community.home-assistant.io/t/waveshare-esp32-s3-touch-lcd-7/789584/2
+
+substitutions: 
+  name: waveshare-1
+  friendly_name: Waveshare LCD-1
+  id_prefix: Ws1_
+  device_sampling_time: 30s
+
+esphome:
+  name: ${name}
+  friendly_name: ${friendly_name}
+  platformio_options:
+    build_flags: "-DBOARD_HAS_PSRAM"
+    board_build.esp-idf.memory_type: qio_opi
+    board_build.flash_mode: dio
+    board_upload.maximum_ram_size: 524288
+
+esp32:
+  board: esp32-s3-devkitc-1
+  variant: ESP32S3
+  flash_size: 8MB
+  framework:
+    type: esp-idf
+    sdkconfig_options:
+      CONFIG_ESP32S3_DEFAULT_CPU_FREQ_240: y
+      CONFIG_ESP32S3_DATA_CACHE_64KB: y
+      CONFIG_SPIRAM_FETCH_INSTRUCTIONS: y
+      CONFIG_SPIRAM_RODATA: y
+      
+psram:
+  mode: octal
+  speed: 80MHz # Was 120MHz, but wouldn't Compile
+
+################################################################################
+# IO Extender
+#-------------------------------------------------------------------------------
+i2c:
+  sda: GPIO08
+  scl: GPIO09
+  scan: True
+  id: bus_a
+#-------------------------------------------------------------------------------
+
+# Enable logging
+logger:
+  level: DEBUG
+  logs:
+    touch: DEBUG
+    display: DEBUG
+
+# Enable Home Assistant API
+api:
+  encryption:
+    key: !secret ws1_api_key
+ota:
+  - platform: esphome
+    password: !secret ws1_ota_pass
+
+# IP Reservation:-192.168.59.198
+wifi:
+  ssid: !secret wifi_ssid
+  password: !secret wifi_password
+
+  # Enable fallback hotspot (captive portal) in case wifi connection fails
+  ap:
+    ssid: "WaveShareLcd-1 Fallback"
+    password: !secret ws1_ap_pass
+
+web_server:
+  version: 3
+  include_internal: True
+
+captive_portal:
+
+################################################################################
+# IO Extender
+#-------------------------------------------------------------------------------
+ch422g:
+  - id: ch422g_hub
+
+################################################################################
+# Switches for Restart & Backlight
+#-------------------------------------------------------------------------------
+switch:
+  - platform: restart
+    name: "Restart"
+    id: device_restart
+  
+  - platform: safe_mode
+    name: Use Safe Mode
+    id: device_safe_mode
+    
+  - platform: gpio
+    id: lcdbacklight
+    name: lcdbacklight
+    pin:
+      ch422g: ch422g_hub
+      number: 2
+      mode:
+        output: true
+      inverted: false
+    restore_mode: ALWAYS_ON
+
+################################################################################
+# Touch Screen
+#-------------------------------------------------------------------------------
+touchscreen:
+  platform: gt911
+  id: my_touch
+  interrupt_pin: GPIO4
+  reset_pin:
+    ch422g: ch422g_hub
+    number: 1
+    mode: OUTPUT
+  on_touch:
+    - lambda: |-
+        ESP_LOGI("Touch", "Touch detected at x=%d, y=%d", touch.x, touch.y);
+  on_update:
+    - lambda: |-
+          for (auto touch: touches)  {
+              if (touch.state <= 2) {
+                ESP_LOGI("Touch points:", "id=%d x=%d, y=%d x.raw=%d, y.raw=%d", touch.id, touch.x, touch.y, touch.x_raw, touch.y_raw);
+              }
+          }  
+
+################################################################################
+# Display
+#-------------------------------------------------------------------------------
+display:
+  - platform: rpi_dpi_rgb
+    id: my_display
+    data_pins:
+      red: [1, 2, 42, 41, 40]
+      green: [39, 0, 45, 48, 47, 21]
+      blue: [14, 38, 18, 17, 10]
+    de_pin: 5
+    hsync_pin:
+      number: 46
+      ignore_strapping_warning: true
+    vsync_pin:
+      number: 3
+      ignore_strapping_warning: true
+    pclk_pin: 7
+    pclk_inverted: True
+    pclk_frequency: 16MHZ
+    reset_pin: 
+      ch422g: ch422g_hub
+      number: 3
+    
+    hsync_front_porch: 8
+    hsync_pulse_width: 4
+    hsync_back_porch: 8
+
+    vsync_front_porch: 16
+    vsync_pulse_width: 4
+    vsync_back_porch: 16
+
+    color_order: RGB
+    auto_clear_enabled: false
+    update_interval: 30s
+    dimensions:
+      width: 800
+      height: 480
+
+################################################################################
+# Fonts
+#-------------------------------------------------------------------------------
+font:
+  - file: "fonts/RobotoCondensed-VariableFont_wght.ttf"
+    id: roboto_24
+    size: 24
+    bpp: 4
+  - file: "fonts/RobotoCondensed-VariableFont_wght.ttf"
+    id: roboto_36
+    size: 36
+    bpp: 4
+  - file: "fonts/RobotoCondensed-VariableFont_wght.ttf"
+    id: roboto_icons_36
+    size: 36
+    bpp: 4
+  - file: "fonts/RobotoCondensed-VariableFont_wght.ttf"
+    id: roboto_48
+    size: 48
+    bpp: 4
+  - file: "fonts/RobotoCondensed-VariableFont_wght.ttf"
+    id: roboto_icons_100
+    size: 100
+    bpp: 4
+    extras:
+      - file: "fonts/materialdesignicons-webfont.ttf"
+        glyphs: [
+          "\U000F02D1", # mdi-heart
+          "\U000F05D4", # mdi-airplane-landing
+          "\U000F035B", # mdi-memory
+          "\U000F0606", # mdi-pool
+          ]
+
+
+################################################################################
+# Images
+#-------------------------------------------------------------------------------
+image:
+  - file: img/logo.png
+    type: RGB565
+    id: logo_image
+    resize: 100x100
+  - file: "img/light.png"
+    id: on_light
+    resize: 50x50
+    type: RGB565
+  - file: "img/small_hum.png"
+    id: small_hum
+    resize: 50x75
+    type: RGB565
+  - file: "img/small_logo.png"
+    id: small_logo
+    resize: 250x52
+    type: RGB565
+  - file: "img/small_off.png"
+    id: small_off
+    resize: 50x75
+    type: RGB565
+  - file: "img/small_temp.png"
+    id: small_temp
+    resize: 50x75
+    type: RGB565
+  - file: "img/no_light.png"
+    id: no_light
+    resize: 50x50
+    type: RGB565
+
+################################################################################
+# LGVL
+#-------------------------------------------------------------------------------
+lvgl:
+  pages:
+    - id: room_page
+      bg_color: 0x000000
+      widgets:
+        # Water Temp
+        - arc:
+            id: gauge1_arc
+            arc_rounded: false
+            arc_width: 40
+            indicator:
+              arc_color: 0x2fff00
+              arc_rounded: false
+              arc_width: 40
+            start_angle: 180 # Default 135
+            end_angle: 0 # Default 45
+            rotation: 0
+            x: 20
+            y: 10
+            width: 240
+            height: 240
+            value: 10
+            min_value: 20
+            max_value: 40
+#            adjustable: true
+        - label:
+            id: gauge_label
+#            align: CENTER
+#            text_align: CENTER
+            text: "Water Temp"
+            x: 50
+            y: 130
+            text_color: WHITE
+            text_font: roboto_icons_36
+        - label: # gauge numeric indicator
+            id: val1_text
+            text_font: roboto_48
+#            text_color: 0x2fff00
+            text_color: WHITE
+            text_align: CENTER
+            x: 100
+            y: 70
+            text: "00.0"
+
+        # Temp Rise
+        - arc:
+            id: gauge2_arc
+            arc_rounded: false
+            arc_width: 50
+            indicator:
+              arc_color: 0xff0000
+              arc_rounded: false
+              arc_width: 50
+            start_angle: 180 # Default 135
+            end_angle: 0 # Default 45
+            rotation: 0
+            x: 280
+            y: 10
+            width: 240
+            height: 240
+            value: 0
+            min_value: 0
+            max_value: 10
+#            adjustable: true
+        - label:
+            id: gauge2_label
+#            align: CENTER
+#            text_align: CENTER
+            text: "Temp Rise"
+            x: 320
+            y: 130
+            text_color: WHITE
+            text_font: roboto_icons_36
+        - label: # gauge numeric indicator
+            id: val2_text
+            text_font: roboto_48
+#            text_color: 0x2fff00
+            text_color: WHITE
+            text_align: CENTER
+            x: 370
+            y: 70
+            text: "00.0"
+        # Temp Reqd
+        - arc:
+            id: gauge3_arc
+            arc_rounded: false
+            arc_width: 50
+            indicator:
+              arc_color: YELLOW
+              arc_rounded: false
+              arc_width: 50
+            start_angle: 180 # Default 135
+            end_angle: 0 # Default 45
+            rotation: 0
+            x: 540
+            y: 10
+            width: 240
+            height: 240
+            value: 0
+            min_value: 0
+            max_value: 10
+#            adjustable: true
+        - label:
+            id: gauge3_label
+#            align: CENTER
+#            text_align: CENTER
+            text: "Temp Reqd"
+            x: 580
+            y: 130
+            text_color: WHITE
+            text_font: roboto_icons_36
+        - label: # gauge numeric indicator
+            id: val3_text
+            text_font: roboto_48
+#            text_color: 0x2fff00
+            text_color: WHITE
+            text_align: CENTER
+            x: 630
+            y: 70
+            text: "00.0"
+        # Ambient Temp
+        - arc:
+            id: gauge4_arc
+            arc_rounded: false
+            arc_width: 40
+            indicator:
+              arc_color: GREEN
+#              arc_color: 0x2fff00
+              arc_rounded: false
+              arc_width: 40
+            start_angle: 180 # Default 135
+            end_angle: 0 # Default 45
+            rotation: 0
+            x: 20
+            y: 310
+            width: 240
+            height: 240
+            value: 10
+            min_value: 20
+            max_value: 40
+#            adjustable: true
+        - label:
+            id: gauge4_label
+#            align: CENTER
+#            text_align: CENTER
+            text: "Ambient Temp"
+            x: 30
+            y: 430
+            text_color: WHITE
+            text_font: roboto_icons_36
+        - label: # gauge numeric indicator
+            id: val4_text
+            text_font: roboto_48
+#            text_color: 0x2fff00
+            text_color: WHITE
+            text_align: CENTER
+            x: 100
+            y: 370
+            text: "00.0"
+        # Return Temp
+        - arc:
+            id: gauge5_arc
+            arc_rounded: false
+            arc_width: 50
+            indicator:
+              arc_color: MAGENTA
+              arc_rounded: false
+              arc_width: 50
+            start_angle: 180 # Default 135
+            end_angle: 0 # Default 45
+            rotation: 0
+            x: 280
+            y: 310
+            width: 240
+            height: 240
+            value: 0
+            min_value: 20
+            max_value: 40
+#            adjustable: true
+        - label:
+            id: gauge5_label
+#            align: CENTER
+#            text_align: CENTER
+            text: "Return Temp"
+            x: 320
+            y: 430
+            text_color: WHITE
+            text_font: roboto_icons_36
+        - label: # gauge numeric indicator
+            id: val5_text
+            text_font: roboto_48
+#            text_color: 0x2fff00
+            text_color: WHITE
+            text_align: CENTER
+            x: 360
+            y: 370
+            text: "00.0"
+        # Flow Rate
+        - arc:
+            id: gauge6_arc
+            arc_rounded: false
+            arc_width: 50
+            indicator:
+              arc_color: BLUE
+              arc_rounded: false
+              arc_width: 50
+            start_angle: 180 # Default 135
+            end_angle: 0 # Default 45
+            rotation: 0
+            x: 540
+            y: 310
+            width: 240
+            height: 240
+            value: 0
+            min_value: 0
+            max_value: 10
+#            adjustable: true
+        - label:
+            id: gauge6_label
+#            align: CENTER
+#            text_align: CENTER
+            text: "Flo Rate l/m"
+            x: 580
+            y: 430
+            text_color: WHITE
+            text_font: roboto_icons_36
+        - label: # gauge numeric indicator
+            id: val6_text
+            text_font: roboto_48
+#            text_color: 0x2fff00
+            text_color: WHITE
+            text_align: CENTER
+            x: 620
+            y: 370
+            text: "00.0"
+
+# Switches for Spa Pump & Solar -------------------------------------------------
+        # Solar Pump
+        - switch:
+            id: switch1_id
+            x: 720
+            y: 200
+#            width: 60
+#            height: 60
+
+            on_press: # on_press Triggers Immediately, on_click Triggers on Release if within defined time frame
+              - homeassistant.action:
+                  action: switch.toggle
+                  data:
+                    entity_id: switch.spa_solar_pump
+        - label:
+            id: s1_lab
+            text_font: roboto_24
+            text_color: WHITE
+            text: "Solar"
+            x: 660
+            y: 200 
+
+        # Spa Pump
+        - switch:
+            id: switch2_id
+            x: 720
+            y: 240
+#            width: 60
+#            height: 60
+            checkable: true
+            on_click:
+              - homeassistant.action:
+                  action: switch.toggle
+                  data:
+                    entity_id: switch.energy_3_shed
+        - label:
+            id: s2_lab
+            text_font: roboto_24
+            text_color: WHITE
+            text: "Spa"
+            x: 660
+            y: 240
+
+        - button:
+            id: spapump_but
+            text: "Spa"
+            x: 0
+            y: 0
+            width: 50
+            height: 30
+            radius: 5
+            bg_color: RED
+            text_color: WHITE
+            checked: 
+              bg_color: 0x2fff00
+              text_color: BLACK
+            on_click: # on_press Triggers Immediately, on_click Triggers on Release if within defined time frame
+              - homeassistant.action:
+                  action: switch.toggle
+                  data:
+                    entity_id: switch.energy_3_shed
+        
+##---------------------------Derivitive Temp Rise------------------
+        - label:
+            id: dtemp_label
+            x: 580
+            y: 280
+            text: "Hourly Rise..        °C"
+            text_font: roboto_24
+            text_color: WHITE
+        - label:
+            id: dtemp_val
+            x: 720
+            y: 280
+            text: "##.#"
+            text_font: roboto_24
+            text_color: WHITE
+
+          
+          
+        - label:
+#            text: "ESPBoards \U000F02D1"
+            text: "\U000F0606 Spa Status"
+            text_color: CYAN
+            align: CENTER
+            text_align: CENTER
+            x: -100
+            y: 0
+            text_font: roboto_icons_100
+
+
+################################################################################
+# Binary Sensors for Pumps Switches & Bottons
+#-------------------------------------------------------------------------------
+binary_sensor:
+  - platform: homeassistant
+    id: spasolarpumps
+    entity_id: switch.spa_solar_pump
+    publish_initial_state: true
+    on_state:
+      then:
+        - lvgl.widget.update:
+            id: switch1_id
+            state:
+             checked: !lambda return x;
+  - platform: homeassistant
+    id: spapump
+    entity_id: switch.energy_3_shed
+    publish_initial_state: true
+    on_state:
+      then:
+        - lvgl.widget.update:
+            id: switch2_id
+            state:
+             checked: !lambda return x;
+# New Bit for Button
+        - lvgl.widget.update:
+            id: spapump_but
+            state:
+             checked: !lambda return x;
+
+
+
+################################################################################
+# Sensors from Home Assistant
+#-------------------------------------------------------------------------------
+sensor:
+  - platform: homeassistant
+    name: "Current Temp"
+    id: spatmp_cur_2
+    entity_id: sensor.spa_1_ts_cur # e.g., sensor.living_room_temperature
+    internal: True # Keep it internal, for use in ESPHome only
+    on_value:
+      then:
+        - lvgl.arc.update:
+            id: gauge1_arc
+            value: !lambda return x;
+        - lvgl.label.update:
+            id: val1_text
+            text:
+              format: "%2.1f"
+              args: [ 'x' ]
+  - platform: homeassistant
+    name: "Temp Rise"
+    id: spatmp_dif_2
+    entity_id: sensor.spa_temp_rise # e.g., sensor.living_room_temperature
+    internal: True # Keep it internal, for use in ESPHome only
+    on_value:
+      then:
+        - lvgl.arc.update:
+            id: gauge2_arc
+            value: !lambda return x;
+        - lvgl.label.update:
+            id: val2_text
+            text:
+              format: "%2.1f"
+              args: [ 'x' ]
+  - platform: homeassistant
+    name: "Temp Reqd"
+    id: spatmp_req_2
+    entity_id: sensor.spa_temp_req # e.g., sensor.living_room_temperature
+    internal: True # Keep it internal, for use in ESPHome only
+    on_value:
+      then:
+        - lvgl.arc.update:
+            id: gauge3_arc
+            value: !lambda return x;
+        - lvgl.label.update:
+            id: val3_text
+            text:
+              format: "%2.1f"
+              args: [ 'x' ]
+  - platform: homeassistant
+    name: "Ambient Temp"
+    id: spatmp_amb_2
+    entity_id: sensor.spa_1_ts_amb # e.g., sensor.living_room_temperature
+    internal: True # Keep it internal, for use in ESPHome only
+    on_value:
+      then:
+        - lvgl.arc.update:
+            id: gauge4_arc
+            value: !lambda return x;
+        - lvgl.label.update:
+            id: val4_text
+            text:
+              format: "%2.1f"
+              args: [ 'x' ]
+  - platform: homeassistant
+    name: "Return Temp"
+    id: spatmp_ret_2
+    entity_id: sensor.spa_1_ts_out # e.g., sensor.living_room_temperature
+    internal: True # Keep it internal, for use in ESPHome only
+    on_value:
+      then:
+        - lvgl.arc.update:
+            id: gauge5_arc
+            value: !lambda return x;
+        - lvgl.label.update:
+            id: val5_text
+            text:
+              format: "%2.1f"
+              args: [ 'x' ]
+  - platform: homeassistant
+    name: "Flow Rate"
+    id: spa_rtn_flo_2
+    entity_id: sensor.spa_1_spa_1_return_flow # e.g., sensor.living_room_temperature
+    internal: True # Keep it internal, for use in ESPHome only
+    on_value:
+      then:
+        - lvgl.arc.update:
+            id: gauge6_arc
+            value: !lambda return x;
+        - lvgl.label.update:
+            id: val6_text
+            text:
+              format: "%2.1f"
+              args: [ 'x' ]
+  
+  - platform: homeassistant
+    id: derivitive_temp_rise
+    entity_id: sensor.trst
+    on_value:
+      - lvgl.label.update:
+          id: dtemp_val
+          text: 
+            format: "%2.1f"
+            args: [ 'x' ]
+
+################################################################################
+# Text Sensors for Wifi etc
+#-------------------------------------------------------------------------------
+text_sensor:
+
+  - platform: wifi_info
+    ip_address:
+      name: "${friendly_name} Address"
+      id: elecrow1_address
+    bssid:
+      name: "${friendly_name} AP Connection"
+      id: elecrow1_ap
+      filters:
+        substitute:
+          - "84:D8:1B:DD:4E:F4 -> Front_Office"
+          - "00:5F:67:A0:71:F0 -> Centre_Office"
+          - "C0:06:C3:35:A7:FE -> Lounge_Room"
+          - "00:31:92:1B:38:22 -> Bbq_Area"
+          - "50:C7:BF:D3:38:5A -> Back_Room"
+          - "B0:4E:26:E4:41:FE -> Outdoor"
+          - "50:C7:BF:D3:3C:61 -> Shed"
+    mac_address:
+      name: "${friendly_name} Wifi Mac Address"
