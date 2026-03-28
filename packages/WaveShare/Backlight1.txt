@@ -1,0 +1,83 @@
+ch422g:
+  - id: ch422g_hub
+
+output:
+  - platform: gpio
+    id: lcdbacklight_output
+    pin:
+      ch422g: ch422g_hub
+      number: 2
+      mode:
+        output: true
+      inverted: false
+#brightness
+  - platform: ledc
+    pin: GPIO16
+    id: backlight_brightness_output
+    min_power: "0.07"
+    zero_means_zero: true
+
+
+light:
+  - platform: binary
+    output: lcdbacklight_output
+    id: lcdbacklight
+    internal: true
+    icon: mdi:wall-sconce-flat-outline
+    disabled_by_default: true
+    restore_mode: ALWAYS_ON
+    on_turn_off:
+      - script.execute: start_antiburn
+    on_turn_on:
+      - script.execute: stop_antiburn
+  - platform: monochromatic
+    output: backlight_brightness_output
+    id: lcdbacklight_brightness
+    name: LCD Backlight
+    icon: mdi:wall-sconce-flat-outline
+    disabled_by_default: true
+    restore_mode: ALWAYS_ON
+    initial_state:
+      brightness: "0.8"
+    on_turn_off:
+      - script.execute: start_antiburn
+    on_turn_on:
+      - script.execute: stop_antiburn
+
+
+script:
+  - id: start_antiburn
+    then:
+      - delay: 5min
+      - logger.log: Starting automatic antiburn.
+      - switch.turn_on: switch_antiburn
+  - id: stop_antiburn
+    then:
+      - script.stop: start_antiburn
+      - switch.turn_off: switch_antiburn
+
+
+switch:
+  - platform: template
+    name: Antiburn
+    id: switch_antiburn
+    icon: mdi:television-shimmer
+    optimistic: true
+    entity_category: "config"
+    disabled_by_default: true
+    turn_on_action:
+      - logger.log: "Starting Antiburn"
+      - if:
+          condition: lvgl.is_paused
+          then:
+            - lvgl.resume:
+            - lvgl.widget.redraw:
+      - lvgl.pause:
+          show_snow: true
+    turn_off_action:
+      - logger.log: "Stopping Antiburn"
+      - if:
+          condition: lvgl.is_paused
+          then:
+            - lvgl.resume:
+            - lvgl.widget.redraw:

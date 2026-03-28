@@ -1,0 +1,50 @@
+display:
+  - platform: ili9xxx
+    model: ILI9341
+    cs_pin: 22
+    dc_pin: 01 #TXD 0
+    reset_pin: 03 #RXD 0
+    dimensions: 
+      height: 240
+      width: 320
+
+    transform: 
+      swap_xy: True    #L/Scape Pins on LHS
+      mirror_x: True
+      mirror_y: True
+
+#      swap_xy: True    #L/Scape Pins on RHS
+#      mirror_x: False
+#      mirror_y: False
+
+    invert_colors: false
+    color_palette: 8BIT
+    color_order: bgr
+    id: tft_display
+#    update_interval: 10s # Added While Trying Lvgl
+
+touchscreen:
+  platform: xpt2046
+  id: my_touchscreen
+  cs_pin: 18
+  interrupt_pin: 17
+  update_interval: 100ms
+  transform:
+    swap_xy: TRUE
+    mirror_x: True
+    mirror_y: True
+#  report_interval: never
+  on_touch:
+    - lambda: |-
+          ESP_LOGI("cal", "x=%d, y=%d, x_raw=%d, y_raw=%0d",
+              touch.x,
+              touch.y,
+              touch.x_raw,
+              touch.y_raw
+              );
+  threshold: 400
+  calibration:
+    x_min: 392
+    x_max: 3696
+    y_min: 463
+    y_max: 3536
