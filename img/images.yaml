@@ -1,0 +1,33 @@
+image:
+  - file: img/logo.png
+    type: RGB565
+    id: logo_image
+    resize: 100x100
+  - file: "img/light.png"
+    id: on_light
+    resize: 50x50
+    type: RGB565
+  - file: "img/small_hum.png"
+    id: small_hum
+    resize: 50x75
+    type: RGB565
+  - file: "img/small_logo.png"
+    id: small_logo
+    resize: 250x52
+    type: RGB565
+  - file: "img/small_off.png"
+    id: small_off
+    resize: 50x75
+    type: RGB565
+  - file: "img/small_temp.png"
+    id: small_temp
+    resize: 50x75
+    type: RGB565
+  - file: "img/no_light.png"
+    id: no_light
+    resize: 50x50
+    type: RGB565
+  - file: "img/Surf.png"
+    id: surf
+    type: RGB565
+    resize: 800x480
