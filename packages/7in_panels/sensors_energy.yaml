@@ -1,0 +1,97 @@
+###############################################################################
+# Sensors from Home Assistant
+#-------------------------------------------------------------------------------
+sensor:
+  - platform: homeassistant
+    name: "Grid Total"
+    id: pwr_grid
+    entity_id: sensor.sdm230m_power
+    internal: True # Keep it internal, for use in ESPHome only
+    on_value:
+      then:
+        - lvgl.arc.update:
+            id: gauge4e_arc
+            value: !lambda return x;
+        - lvgl.label.update:
+            id: val4e_text
+            text:
+              format: "%.0f"
+              args: [ 'x' ]
+
+  - platform: homeassistant
+    name: "Inverter Input"
+    id: pwr_inv_in
+    entity_id: sensor.sdm220m_2_power
+    internal: True # Keep it internal, for use in ESPHome only
+    on_value:
+      then:
+        - lvgl.arc.update:
+            id: gauge1e_arc
+            value: !lambda return x;
+        - lvgl.label.update:
+            id: val1e_text
+            text:
+              format: "%.0f"
+              args: [ 'x' ]
+
+  - platform: homeassistant
+    name: "Inverter Output"
+    id: pwr_inv_out
+    entity_id: sensor.sdm220m_3_power
+    internal: True # Keep it internal, for use in ESPHome only
+    on_value:
+      then:
+        - lvgl.arc.update:
+            id: gauge2e_arc
+            value: !lambda return x;
+        - lvgl.label.update:
+            id: val2e_text
+            text:
+              format: "%.0f"
+              args: [ 'x' ]
+
+  - platform: homeassistant
+    name: "Inverter Production"
+    id: pwr_inv_prod
+    entity_id: sensor.inverter_net_power
+    internal: True # Keep it internal, for use in ESPHome only
+    on_value:
+      then:
+        - lvgl.arc.update:
+            id: gauge3e_arc
+            value: !lambda return x;
+        - lvgl.label.update:
+            id: val3e_text
+            text:
+              format: "%.0f"
+              args: [ 'x' ]
+        - lvgl.arc.update:
+            id: gauge5e_arc
+            value: !lambda return x;
+        - lvgl.label.update:
+            id: val5e_text
+            text:
+              format: "%.0f"
+              args: [ 'x' ]
+
+  - platform: template
+    name: "Total Power"
+    id: pwr_total
+    unit_of_measurement: "W"
+    lambda: |-
+      //return (id(pwr_grid) + (pwr_inv_out));
+      float power1 = id(pwr_grid).state;
+      float power2 = id(pwr_inv_prod).state;
+      return power1 + power2;
+    update_interval: 5s
+    internal: True # Keep it internal, for use in ESPHome only
+    on_value:
+      then:
+        - lvgl.arc.update:
+            id: gauge6e_arc
+            value: !lambda return x;
+        - lvgl.label.update:
+            id: val6e_text
+            text:
+              format: "%.0f"
+              args: [ 'x' ]

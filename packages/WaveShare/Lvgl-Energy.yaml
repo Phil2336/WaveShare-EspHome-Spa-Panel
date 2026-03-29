@@ -1,0 +1,203 @@
+lvgl:
+  pages:
+    - id: main_right
+      bg_color: BLACK
+      scrollbar_mode: "OFF"
+      scrollable: false
+      scroll_dir: none
+      widgets:
+        - obj:
+            align: TOP_MID
+            styles: header_footer
+            widgets:
+              - label:
+                  text: "\U000F0606  ESPHome Power Control Panel  \U000F0606"
+                  align: CENTER
+                  text_align: CENTER
+                  text_color: WHITE
+                  text_font: roboto_24
+# New Stuff
+        - label: # API Status Icon
+            text: "\uF1EB"
+#            id: lbl_hastatus
+            hidden: true
+            align: top_right
+            x: -2
+            y: 7
+            text_align: right
+            text_color: WHITE
+        - obj: # ===== Container for First Row of Gauges. =========================================
+            bg_color: GREEN
+            bg_opa: 0
+            border_color: BLACK # Was Red for Testing.
+            border_opa: 0 # Set to 1 for Testing
+            width: 800
+            height: 180
+            x: 0
+            y: 20
+            scrollbar_mode: "OFF"
+            scrollable: false
+            widgets:
+              - arc: #----- Inverter Input Gauge -------------------------------------------------------
+                  id: gauge1e_arc
+                  indicator:
+                    arc_color: 0x2fff00
+                  start_angle: 180
+                  end_angle: 0
+                  x: 0
+                  y: 0
+                  value: 0
+                  min_value: 0
+                  max_value: 5000
+              - label: # Gauge Name
+                  id: gauge1e_label
+                  text: "Inverter Input"
+                  styles: s_lab
+                  text_color: WHITE
+                  x: 0
+                  y: 120
+              - label: # Gauge Value
+                  id: val1e_text
+                  text: "##.#"
+                  styles: s_val
+                  text_color: WHITE
+                  x: 0 #Was 80
+                  y: 60
+              - arc: #----- Inverter Output Gauge --------------------------------------------------------
+                  id: gauge2e_arc
+                  indicator:
+                    arc_color: 0xff0000
+                  start_angle: 180
+                  end_angle: 0
+                  x: 260
+                  y: 0
+                  value: 0
+                  min_value: 0
+                  max_value: 5000
+              - label: # Gauge Name
+                  id: gauge2e_label
+                  text: "Inverter Output"
+                  styles: s_lab
+                  text_color: WHITE
+                  x: 260 #was 310
+                  y: 120
+              - label: # Gauge Value
+                  id: val2e_text
+                  text: "##.#"
+                  styles: s_val
+                  text_color: WHITE
+                  x: 260 #Was 350
+                  y: 60
+              - arc: #----- Inverter Production Gauge --------------------------------------------------------
+                  id: gauge3e_arc
+                  arc_color: 0xcccccc
+                  indicator:
+                    arc_color: YELLOW
+                  start_angle: 180
+                  end_angle: 0
+                  x: 520
+                  y: 0
+                  value: 0
+                  min_value: 0
+                  max_value: 5000
+              - label: # Gauge Name
+                  id: gauge3e_label
+                  text: "Inverter Net"
+                  styles: s_lab
+                  text_color: WHITE
+                  x: 520
+                  y: 120
+              - label: # Gauge Value
+                  id: val3e_text
+                  text: "##.#"
+                  styles: s_val
+                  text_color: WHITE
+                  x: 520 #was 610
+                  y: 60
+        - obj: #===== Container for Second Row of Gauges. ==========================================
+            bg_color: GREEN
+            bg_opa: 0
+            border_color: BLACK # Was CYAN for Testing.
+            border_opa: 0% # Set to 1 or 100%
+            width: 800
+            height: 180 #Was 240
+            x: 0
+            y: 200
+            scrollbar_mode: "OFF"
+            scrollable: false
+            widgets:
+              - arc: #----- Grid Power Gauge -----------------------------------------------------
+                  id: gauge4e_arc
+                  indicator:
+                    arc_color: GREEN
+                  start_angle: 180
+                  end_angle: 0
+                  x: 0
+                  y: 0
+                  value: 0
+                  min_value: 0
+                  max_value: 5000
+              - label: # Gauge Name
+                  id: gauge4e_label
+                  text: "Grid Power"
+                  styles: s_lab
+                  text_color: WHITE
+                  x: 0
+                  y: 120
+              - label: # Gauge Value
+                  id: val4e_text
+                  text: "##.#"
+                  styles: s_val
+                  text_color: WHITE
+                  x: 0
+                  y: 60
+              - arc: #----- Solar Power Gauge ------------------------------------------------------
+                  id: gauge5e_arc
+                  indicator:
+                    arc_color: MAGENTA
+                  start_angle: 180
+                  end_angle: 0
+                  x: 260
+                  y: 0
+                  value: 0
+                  min_value: 0
+                  max_value: 4000
+              - label: # Gauge Name
+                  id: gauge5e_label
+                  text: "Solar Power"
+                  text_color: WHITE
+                  styles: s_lab
+                  x: 260
+                  y: 120
+              - label: # Gauge Value
+                  id: val5e_text
+                  text: "##.#"
+                  styles: s_val
+                  text_color: WHITE
+                  x: 260
+                  y: 60
+              - arc: #----- Total Power Gauge --------------------------------------------------------
+                  id: gauge6e_arc
+                  indicator:
+                    arc_color: BLUE
+                  start_angle: 180
+                  end_angle: 0
+                  x: 520
+                  y: 0
+                  value: 0
+                  min_value: 0
+                  max_value: 5000
+              - label: # Gauge Name
+                  id: gauge6e_label
+                  text: "Total Power"
+                  styles: s_lab
+                  text_color: WHITE
+                  x: 520
+                  y: 120
+              - label: # Gauge Value
+                  id: val6e_text
+                  styles: s_val
+                  text_color: WHITE
+                  x: 520
+                  y: 60
+                  text: "##.#"

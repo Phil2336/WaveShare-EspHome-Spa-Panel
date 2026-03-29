@@ -1,0 +1,278 @@
+#----- TV Page --------------------------------------------------------------------------------------------
+lvgl:
+  pages:
+    - id: Right_Tv
+      bg_color: BLACK
+      scrollable: "OFF"
+      widgets:
+        - obj:
+            align: TOP_MID
+            styles: header_footer
+            widgets:
+              - label:
+                  text: "\U000F0606  ESPHome Bbq TV  \U000F0606"
+                  align: CENTER
+                  text_align: CENTER
+                  text_color: WHITE
+                  text_font: roboto_24
+#----- Container for 1st Row Channel Buttons
+        - obj:
+            pad_all: 0
+            bg_color: GREEN
+            bg_opa: 35%
+            border_color: RED # Was CYAN for Testing.
+            border_opa: 50%
+            align: TOP_MID
+            bg_grad_dir: NONE
+            width: 100%
+            height: 25%
+            y: 50
+            layout:
+              type: FLEX
+              flex_flow: ROW
+              flex_align_cross: STRETCH # Was CENTER
+            text_align: CENTER
+            text_font: roboto_icons_36
+            scrollbar_mode: "OFF"
+            scrollable: false
+            widgets:
+              - button:
+                  id: Ch_1
+                  height: 100%
+                  flex_grow: 1
+                  widgets:
+                    - label:
+                        text: "ABC HD\n20"
+                        styles: s_rlybtn
+                  checked:
+                    styles: s_rlybtn_ck
+                  on_click: # on_press Triggers Immediately, on_click Triggers on Release if within defined time frame
+                    - homeassistant.action:
+                        action: media_player.play_media
+                        data:
+                          entity_id: media_player.ai_pont
+                          media_content_id: "20"
+                          media_content_type: "channel"
+              - button:
+                  id: Ch_2
+                  height: 100%
+                  flex_grow: 1
+                  widgets:
+                    - label:
+                        text: "ABC News\n24"
+                        styles: s_rlybtn
+                  checked:
+                    styles: s_rlybtn_ck
+                  on_click: # on_press Triggers Immediately, on_click Triggers on Release if within defined time frame
+                    - homeassistant.action:
+                        action: media_player.play_media
+                        data:
+                          entity_id: media_player.ai_pont
+                          media_content_id: "24"
+                          media_content_type: "channel"
+
+              - button:
+                  id: Ch_3
+                  height: 100%
+                  flex_grow: 1
+                  widgets:
+                    - label:
+                        text: "Ten HD\n50"
+                        styles: s_rlybtn
+                  checked:
+                    styles: s_rlybtn_ck
+                  on_click: # on_press Triggers Immediately, on_click Triggers on Release if within defined time frame
+#                    - homeassistant.service:
+                    - homeassistant.action:
+                        action: media_player.play_media
+                        data:
+                          entity_id: media_player.ai_pont
+                          media_content_id: "50"
+                          media_content_type: "channel"
+
+              - button:
+                  id: Ch_4
+                  height: 100%
+                  flex_grow: 1
+#                  styles: s_rlybtn
+                  widgets:
+                    - label:
+                        text: "Sky News\n56"
+                        styles: s_rlybtn
+                  checked:
+                    styles: s_rlybtn_ck
+                  on_click: # on_press Triggers Immediately, on_click Triggers on Release if within defined time frame
+                    - homeassistant.action:
+                        action: media_player.play_media
+                        data:
+                          entity_id: media_player.ai_pont
+                          media_content_id: "56"
+                          media_content_type: "channel"
+#----- Container for 2nd Row Channel Buttons
+        - obj:
+            pad_all: 0
+            bg_color: GREEN
+            bg_opa: 35%
+            border_color: RED # Was CYAN for Testing.
+            border_opa: 50%
+            align: TOP_MID
+            bg_grad_dir: NONE
+            width: 100%
+            height: 25%
+            y: 180
+          
+            layout:
+              type: FLEX
+              flex_flow: ROW
+              flex_align_cross: STRETCH # Was CENTER
+            text_align: CENTER
+            text_font: roboto_icons_36
+            scrollbar_mode: "OFF"
+            scrollable: false
+            widgets:
+              - button:
+                  id: Ch_5
+                  height: 100%
+                  width: 23%
+                  flex_grow: 1
+                  widgets:
+                    - label:
+                        text: "7 HD\n60"
+                        styles: s_rlybtn
+                  checked:
+                    styles: s_rlybtn_ck
+                  on_click: # on_press Triggers Immediately, on_click Triggers on Release if within defined time frame
+                    - homeassistant.action:
+                        action: media_player.play_media
+                        data:
+                          entity_id: media_player.ai_pont
+                          media_content_id: "60"
+                          media_content_type: "channel"
+              - button:
+                  id: Ch_6
+                  height: 100%
+                  width: 23%
+                  flex_grow: 1
+                  widgets:
+                    - label:
+                        text: "NBN\n80"
+                        styles: s_rlybtn
+                  checked:
+                    styles: s_rlybtn_ck
+                  on_click: # on_press Triggers Immediately, on_click Triggers on Release if within defined time frame
+#                    - homeassistant.service:
+                    - homeassistant.action:
+                        action: media_player.play_media
+                        data:
+                          entity_id: media_player.ai_pont
+                          media_content_id: "80"
+                          media_content_type: "channel"
+
+              - button:
+                  id: Ch_7
+                  height: 100%
+                  width: 23%
+                  flex_grow: 1
+                  widgets:
+                    - label:
+                        text: "9GemHd\n85"
+                        styles: s_rlybtn
+                  checked:
+                    styles: s_rlybtn_ck
+                  on_click: # on_press Triggers Immediately, on_click Triggers on Release if within defined time frame
+#                    - homeassistant.service:
+                    - homeassistant.action:
+                        action: media_player.play_media
+                        data:
+                          entity_id: media_player.ai_pont
+                          media_content_id: "85"
+                          media_content_type: "channel"
+
+              - button:
+                  id: Ch_8
+                  height: 100%
+                  width: 23%
+                  flex_grow: 1
+#                  styles: s_rlybtn
+                  widgets:
+                    - label:
+                        text: "Foxtel\n111"
+                        styles: s_rlybtn
+                  checked:
+                    styles: s_rlybtn_ck
+                  on_click: # on_press Triggers Immediately, on_click Triggers on Release if within defined time frame
+                    - homeassistant.action:
+                        action: media_player.play_media
+                        data:
+                          entity_id: media_player.ai_pont
+                          media_content_id: "111"
+                          media_content_type: "channel"
+#----- Container for Power/Volume Buttons
+        - obj:
+            pad_all: 0
+            bg_color: GREEN
+            bg_opa: 35%
+            border_color: RED # Was CYAN for Testing.
+            border_opa: 50%
+            align: BOTTOM_MID
+            bg_grad_dir: NONE
+            width: 100%
+            height: 25%
+            y: -50
+            layout:
+              type: FLEX
+              flex_flow: ROW
+              flex_align_cross: STRETCH # Was CENTER
+            text_align: CENTER
+            text_font: roboto_icons_36
+            scrollbar_mode: "OFF"
+            scrollable: false
+            widgets:
+              - button:
+                  id: Tv_pwr
+                  height: 100%
+                  flex_grow: 1
+#                  styles: s_rlybtn
+                  widgets:
+                    - label:
+                        text: "Power\nOn/Off"
+                        styles: s_rlybtn
+                  checked:
+                    styles: s_rlybtn_ck
+                  on_click: # on_press Triggers Immediately, on_click Triggers on Release if within defined time frame
+                    - homeassistant.action:
+                        action: remote.toggle
+                        data:
+                          entity_id: remote.ai_pont
+              - button:
+                  id: Tv_vol_dn
+                  height: 100%
+                  flex_grow: 2
+#                  styles: s_rlybtn
+                  widgets:
+                    - label:
+                        text: "Volume\nDown"
+                        styles: s_rlybtn
+                  checked:
+                    styles: s_rlybtn_ck
+                  on_click: # on_press Triggers Immediately, on_click Triggers on Release if within defined time frame
+                    - homeassistant.action:
+                        action: media_player.volume_down
+                        data:
+                          entity_id: media_player.ai_pont
+              - button:
+                  id: Tv_vol_up
+                  height: 100%
+                  flex_grow: 2
+#                  styles: s_rlybtn
+                  widgets:
+                    - label:
+                        text: "Volume\nUp"
+                        styles: s_rlybtn
+                  checked:
+                    styles: s_rlybtn_ck
+                  on_click: # on_press Triggers Immediately, on_click Triggers on Release if within defined time frame
+                    - homeassistant.action:
+                        action: media_player.volume_up
+                        data:
+                          entity_id: media_player.ai_pont

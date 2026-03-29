@@ -1,0 +1,170 @@
+switch:
+  - platform: homeassistant
+    name: Spa Solar Pump
+    id: spasolarpumps1
+    entity_id: switch.spa_solar_pump
+#    publish_initial_state: true
+#    on_state:
+#      then:
+#        - lvgl.widget.update:
+#            id: spasolar_but
+#            state:
+ #            checked: !lambda return x;
+  - platform: homeassistant
+    name: Spa Pump
+    id: spapump1
+    entity_id: switch.energy_3_shed
+#    publish_initial_state: true
+#    on_state:
+#      then:
+#        - lvgl.widget.update:
+#            id: spasolar_but
+#            state:
+ #            checked: !lambda return x;
+################################################################################
+# Binary Sensors for Pumps Switches & Bottons
+#-------------------------------------------------------------------------------
+binary_sensor:
+  - platform: homeassistant
+    id: spasolarpumps
+    entity_id: switch.spa_solar_pump
+    trigger_on_initial_state: true 
+    on_state:
+      then:
+        - lvgl.widget.update:
+            id: spasolar_but
+            state:
+             checked: !lambda return x;
+
+  - platform: homeassistant
+    id: spapump
+    entity_id: switch.energy_3_shed
+    trigger_on_initial_state: true
+    on_state:
+      then:
+# New Bit for Button
+        - lvgl.widget.update:
+            id: spapump_but
+            state:
+             checked: !lambda return x;
+
+################################################################################
+# Sensors from Home Assistant
+#-------------------------------------------------------------------------------
+sensor:
+  - platform: homeassistant
+    name: "Current Temp"
+    id: spatmp_cur_2
+    entity_id: sensor.spa_1_ts_cur # e.g., sensor.living_room_temperature
+    internal: True # Keep it internal, for use in ESPHome only
+    on_value:
+      then:
+        - lvgl.arc.update:
+            id: gauge1_arc
+            value: !lambda return x;
+        - lvgl.label.update:
+            id: val1_text
+            text:
+              format: "%2.1f"
+              args: [ 'x' ]
+  - platform: homeassistant
+    name: "Temp Rise"
+    id: spatmp_dif_2
+    entity_id: sensor.spa_temp_rise # e.g., sensor.living_room_temperature
+    internal: True # Keep it internal, for use in ESPHome only
+    on_value:
+      then:
+        - lvgl.arc.update:
+            id: gauge2_arc
+            value: !lambda return x;
+        - lvgl.label.update:
+            id: val2_text
+            text:
+              format: "%2.1f"
+              args: [ 'x' ]
+  - platform: homeassistant
+    name: "Temp Reqd"
+    id: spatmp_req_2
+    entity_id: sensor.spa_temp_req # e.g., sensor.living_room_temperature
+    internal: True # Keep it internal, for use in ESPHome only
+    on_value:
+      then:
+        - lvgl.arc.update:
+            id: gauge3_arc
+            value: !lambda return x;
+        - lvgl.label.update:
+            id: val3_text
+            text:
+              format: "%2.1f"
+              args: [ 'x' ]
+  - platform: homeassistant
+    name: "Ambient Temp"
+    id: spatmp_amb_2
+    entity_id: sensor.spa_1_ts_amb # e.g., sensor.living_room_temperature
+    internal: True # Keep it internal, for use in ESPHome only
+    on_value:
+      then:
+        - lvgl.arc.update:
+            id: gauge4_arc
+            value: !lambda return x;
+        - lvgl.label.update:
+            id: val4_text
+            text:
+              format: "%2.1f"
+              args: [ 'x' ]
+  - platform: homeassistant
+    name: "Return Temp"
+    id: spatmp_ret_2
+    entity_id: sensor.spa_1_ts_out # e.g., sensor.living_room_temperature
+    internal: True # Keep it internal, for use in ESPHome only
+    on_value:
+      then:
+        - lvgl.arc.update:
+            id: gauge5_arc
+            value: !lambda return x;
+        - lvgl.label.update:
+            id: val5_text
+            text:
+              format: "%2.1f"
+              args: [ 'x' ]
+  - platform: homeassistant
+    name: "Flow Rate"
+    id: spa_rtn_flo_2
+    entity_id: sensor.spa_1_spa_1_return_flow # e.g., sensor.living_room_temperature
+    internal: True # Keep it internal, for use in ESPHome only
+    on_value:
+      then:
+        - lvgl.arc.update:
+            id: gauge6_arc
+            value: !lambda return x;
+        - lvgl.label.update:
+            id: val6_text
+            text:
+              format: "%2.1f"
+              args: [ 'x' ]
+  
+  - platform: homeassistant
+    id: derivitive_temp_rise
+    entity_id: sensor.trst
+    on_value:
+      - lvgl.label.update:
+          id: dtemp_val
+          text: 
+            format: "%2.1f"
+            args: [ 'x' ]
+
+  - platform: homeassistant
+    name: "Set Temp"
+    id: spatmp_set
+    entity_id: input_number.spa_set_temp # e.g., sensor.living_room_temperature
+    internal: True # Keep it internal, for use in ESPHome only
+    on_value:
+      then:
+#        - lvgl.label.update:
+#            id: stemp_val
+#            text:
+#              format: "%2.1f"
+#              args: [ 'x' ]
+        - lvgl.spinbox.update:
+            id: spinbox_id
+            value: !lambda return x;

@@ -1,0 +1,13 @@
+lvgl:
+  theme:
+    arc:
+      width: 240
+      height: 240
+#      start_angle: 180
+#      end_angle: 0
+      arc_rounded: false
+      arc_width: 50
+      arc_color: 0xbbbbbb # 0xcccccc
+      indicator:
+        arc_rounded: false
+        arc_width: 50
