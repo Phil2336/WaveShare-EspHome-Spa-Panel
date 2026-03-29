@@ -1,0 +1,81 @@
+font:
+###### Uesd in 3Dp & EspTest1
+
+#  gfonts://family[@weight]
+  - file: "gfonts://Roboto"
+    id: robo_15
+    size: 15
+
+  - file: "gfonts://Roboto Mono"
+    id: robo_25
+    size: 25
+
+  - file: "gfonts://Roboto"
+    id: robo_30
+    size: 30
+
+###### Used in Elecro Display
+
+  - file: "fonts/RobotoCondensed-VariableFont_wght.ttf"
+    id: roboto_18
+    size: 18
+    bpp: 4
+    extras:
+      - file: "fonts/materialdesignicons-webfont.ttf"
+        glyphs: [
+          "\U000F02D1", # mdi-heart
+          "\U000F05D4", # mdi-airplane-landing
+          "\U000F035B", # mdi-memory
+          "\U000F0606", # mdi-pool
+          ]
+
+  - file: "fonts/RobotoCondensed-VariableFont_wght.ttf"
+    id: roboto_20
+    size: 20
+    bpp: 4
+    extras:
+      - file: "fonts/materialdesignicons-webfont.ttf"
+        glyphs: [
+          "\U000F02D1", # mdi-heart
+          "\U000F05D4", # mdi-airplane-landing
+          "\U000F035B", # mdi-memory
+          "\U000F0606", # mdi-pool
+          ]
+          
+  - file: "fonts/RobotoCondensed-VariableFont_wght.ttf"
+    id: roboto_24
+    size: 24
+    bpp: 4
+    extras:
+      - file: "fonts/materialdesignicons-webfont.ttf"
+        glyphs: [
+          "\U000F02D1", # mdi-heart
+          "\U000F05D4", # mdi-airplane-landing
+          "\U000F035B", # mdi-memory
+          "\U000F0606", # mdi-pool
+          ]
+          
+  - file: "fonts/RobotoCondensed-VariableFont_wght.ttf"
+    id: roboto_36
+    size: 36
+    bpp: 4
+  - file: "fonts/RobotoCondensed-VariableFont_wght.ttf"
+    id: roboto_icons_36
+    size: 36
+    bpp: 4
+  - file: "fonts/RobotoCondensed-VariableFont_wght.ttf"
+    id: roboto_48
+    size: 48
+    bpp: 4
+  - file: "fonts/RobotoCondensed-VariableFont_wght.ttf"
+    id: roboto_icons_100
+    size: 100
+    bpp: 4
+    extras:
+      - file: "fonts/materialdesignicons-webfont.ttf"
+        glyphs: [
+          "\U000F02D1", # mdi-heart
+          "\U000F05D4", # mdi-airplane-landing
+          "\U000F035B", # mdi-memory
+          "\U000F0606", # mdi-pool
+          ]
