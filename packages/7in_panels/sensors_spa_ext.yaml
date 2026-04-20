@@ -1,0 +1,9 @@
+binary_sensor:
+  - id: !extend spasolarpump
+    trigger_on_initial_state: true 
+    on_state:
+      then:
+        - lvgl.widget.update:
+            id: spasolar_but
+            state:
+             checked: !lambda return x;
