@@ -1,5 +1,5 @@
 lvgl:
-  pages:
+  pages: #Energy Data
     - id: main_right
       bg_color: BLACK
       scrollbar_mode: "OFF"

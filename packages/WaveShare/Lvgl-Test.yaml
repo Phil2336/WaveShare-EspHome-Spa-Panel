@@ -1,0 +1,46 @@
+lvgl:
+  pages:
+    - id: test_psge
+      bg_color: BLACK
+      scrollbar_mode: "OFF"
+      scrollable: false
+      scroll_dir: none
+      widgets:
+        - obj:
+            align: TOP_MID
+            styles: header_footer
+            widgets:
+              - label:
+                  text: "\U000F0606  ESPHome Test Page  \U000F0606"
+                  align: CENTER
+                  text_align: CENTER
+                  text_color: WHITE
+                  text_font: roboto_24
+        - meter:
+            align: center
+            height: 400
+            width: 400
+            bg_color: YELLOW #BLACK
+            scales:
+              range_from: -10
+              range_to: 40
+              angle_range: 120
+              rotation: 210
+              ticks:
+                count: 51
+                length: 3
+                major:
+                  stride: 5
+                  length: 13
+                  label_gap: 13
+              indicators:
+                - line:
+                    id: temperature_needle
+                    width: 2
+                    color: 0xFF0000
+                    r_mod: -4
+                - tick_style:
+                    start_value: -10
+                    end_value: 40
+                    color_start: 0x0000bd #0000bd
+                    color_end: 0xbd0000 #ff0000
