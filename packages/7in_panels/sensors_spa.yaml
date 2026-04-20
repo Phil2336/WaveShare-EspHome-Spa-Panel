@@ -1,26 +1,3 @@
-switch:
-  - platform: homeassistant
-    name: Spa Solar Pump
-    id: spasolarpumps1
-    entity_id: switch.spa_solar_pump
-#    publish_initial_state: true
-#    on_state:
-#      then:
-#        - lvgl.widget.update:
-#            id: spasolar_but
-#            state:
- #            checked: !lambda return x;
-  - platform: homeassistant
-    name: Spa Pump
-    id: spapump1
-    entity_id: switch.energy_3_shed
-#    publish_initial_state: true
-#    on_state:
-#      then:
-#        - lvgl.widget.update:
-#            id: spasolar_but
-#            state:
- #            checked: !lambda return x;
 ################################################################################
 # Binary Sensors for Pumps Switches & Bottons
 #-------------------------------------------------------------------------------
@@ -28,13 +5,6 @@ binary_sensor:
   - platform: homeassistant
     id: spasolarpumps
     entity_id: switch.spa_solar_pump
-    trigger_on_initial_state: true 
-    on_state:
-      then:
-        - lvgl.widget.update:
-            id: spasolar_but
-            state:
-             checked: !lambda return x;
 
   - platform: homeassistant
     id: spapump
