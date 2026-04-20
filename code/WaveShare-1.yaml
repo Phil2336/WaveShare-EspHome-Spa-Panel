@@ -30,6 +30,7 @@ packages:
   Lvgl_Energy: !include "packages/WaveShare/Lvgl-Energy.yaml"
   Lvgl_BbqTV: !include "packages/WaveShare/Lvgl-BbqTv.yaml"
   Lvgl_Control: !include "packages/WaveShare/Lvgl-Control.yaml"
+  Lvgl_Test: !include "packages/WaveShare/Lvgl-Test.yaml"
 
 esphome:
   name: ${name}
@@ -147,5 +148,5 @@ script:
   - id: go_home
     mode: restart # Restarts timer if called again
     then:
-      - delay: 10s # Time before returning to main page
+      - delay: 20s # Time before returning to main page
       - lvgl.page.show: main_page
